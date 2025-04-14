@@ -1,23 +1,28 @@
-CREATE TABLE `Guide ` (
+CREATE DATABASE Agence_De_voyage;
+
+USE Agence_De_voyage;
+
+
+CREATE TABLE `Guide` (
   `id_guide` INT PRIMARY KEY AUTO_INCREMENT,
   `nom` VARCHAR(50) NOT NULL,
   `prenom` VARCHAR(50) NOT NULL,
-  `email` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(50) UNIQUE NOT NULL,
   `tel` VARCHAR(15) NOT NULL
 );
 
 CREATE TABLE `Hebergement` (
-  `id_transport` INT PRIMARY KEY AUTO_INCREMENT,
+  `id_hebergement` INT PRIMARY KEY AUTO_INCREMENT,
   `etablissements` VARCHAR(50) NOT NULL,
   `categorie` VARCHAR(50) NOT NULL,
-  `prix_heberg` DECIMAL(8,2) NOT NULL CHECK (prix_hebergement >= 0),
+  `prix_hebergement` DECIMAL(8,2) NOT NULL CHECK (prix_hebergement >= 0),
   `id_guide` INT NOT NULL,
   FOREIGN KEY (id_guide) REFERENCES Guide(id_guide)
   );
 
 CREATE TABLE `Transport` (
   `id_transport` INT PRIMARY KEY AUTO_INCREMENT,
-  `type de transport` VARCHAR(50) NOT NULL,
+  `type_transport` VARCHAR(50) NOT NULL,
   `compagnie` VARCHAR(50) NOT NULL,
   `place_dispo` INT NOT NULL,
   `prix_transport` DECIMAL(8,2) NOT NULL CHECK (prix_transport >= 0)
@@ -30,16 +35,7 @@ CREATE TABLE `Voyage` (
   `place` INT NOT NULL,
   `prix_destination` DECIMAL(8,2) NOT NULL CHECK (prix_destination >= 0),
   `id_hebergement` INT NOT NULL,
-   FOREIGN KEY (id_hebergement) REFERENCES Voyage(id_voyage)
-);
-
-CREATE TABLE `Paiement` (
-  `id_paiement` INT PRIMARY KEY AUTO_INCREMENT,
-  `type_paiement` VARCHAR(50) NOT NULL CHECK (type_paiement IN ('Carte', 'Virement', 'Espèces')),
-  `montant_payer` DECIMAL(8,2) NOT NULL CHECK (montant_payer >= 0),
-  `date_paiement` DATE DEFAULT CURRENT_DATE,
-  `id_reservation` INT NOT NULL,
-   FOREIGN KEY (id_reservation) REFERENCES Paiement(id_paiement)
+   FOREIGN KEY (id_hebergement) REFERENCES Hebergement(id_hebergement)
 );
 
 CREATE TABLE `Client` (
@@ -61,11 +57,20 @@ CREATE TABLE `Reservation` (
   FOREIGN KEY (id_voyage) REFERENCES Voyage(id_voyage)
 );
 
+CREATE TABLE `Paiement` (
+  `id_paiement` INT PRIMARY KEY AUTO_INCREMENT,
+  `type_paiement` VARCHAR(50) NOT NULL CHECK (type_paiement IN ('Carte', 'Virement', 'Espèces')),
+  `montant_payer` DECIMAL(8,2) NOT NULL CHECK (montant_payer >= 0),
+  `date_paiement` DATE DEFAULT CURRENT_DATE,
+  `id_reservation` INT NOT NULL,
+   FOREIGN KEY (id_reservation) REFERENCES Reservation(id_reservation)
+);
+
 CREATE TABLE `Voyage_transport` (
   `id_voyage` INT NOT NULL,
   `id_transport` INT NOT NULL,
   PRIMARY KEY (`id_voyage`, `id_transport`),
-  FOREIGN KEY (id_voyage) REFERENCES Transport(id_transport),
-  FOREIGN KEY (id_transport) REFERENCES Voyage(id_voyage)
+  FOREIGN KEY (id_transport) REFERENCES Transport(id_transport),
+  FOREIGN KEY (id_voyage) REFERENCES Voyage(id_voyage)
 );
 
